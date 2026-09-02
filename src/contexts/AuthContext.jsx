@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(undefined) // undefined = loading
   const [profile, setProfile] = useState(null)
   const [loadingProfile, setLoadingProfile] = useState(false)
+  const [recoveryMode, setRecoveryMode] = useState(false)
 
   const loadProfile = useCallback(async (userId) => {
     setLoadingProfile(true)
@@ -25,7 +26,10 @@ export function AuthProvider({ children }) {
       if (data.session) loadProfile(data.session.user.id)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setRecoveryMode(true)
+      }
       setSession(newSession)
       if (newSession) {
         loadProfile(newSession.user.id)
@@ -50,6 +54,8 @@ export function AuthProvider({ children }) {
     loadingProfile,
     refreshProfile,
     signOut,
+    recoveryMode,
+    setRecoveryMode,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

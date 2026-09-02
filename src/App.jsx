@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Login from './pages/Login'
 import Onboarding from './pages/Onboarding'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Installments from './pages/Installments'
@@ -11,8 +12,13 @@ import Goals from './pages/Goals'
 import Report from './pages/Report'
 
 function Gate({ children }) {
-  const { session, profile, loadingProfile } = useAuth()
+  const { session, profile, loadingProfile, recoveryMode } = useAuth()
 
+  // Prioridade máxima: se o link de "esqueci minha senha" foi clicado,
+  // sempre mostra a tela de definir nova senha, independente de tudo mais.
+  if (recoveryMode) {
+    return <ResetPassword />
+  }
   if (session === undefined) {
     return <div className="loading-screen">Carregando…</div>
   }

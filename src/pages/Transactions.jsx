@@ -28,6 +28,7 @@ export default function Transactions() {
   const [editingId, setEditingId] = useState(null)
   const [typeFilter, setTypeFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [dateFilter, setDateFilter] = useState('')
   const [error, setError] = useState('')
 
   const load = useCallback(async () => {
@@ -133,9 +134,10 @@ export default function Transactions() {
     return combined.filter((t) => {
       if (typeFilter !== 'all' && t.type !== typeFilter) return false
       if (term && !t.description.toLowerCase().includes(term)) return false
+      if (dateFilter && t.date !== dateFilter) return false
       return true
     })
-  }, [combined, typeFilter, search])
+  }, [combined, typeFilter, search, dateFilter])
 
   const visible = searchFiltered.slice(0, 10)
   const relevantCategories = categories.filter((c) => c.type === form.type)
@@ -231,11 +233,36 @@ export default function Transactions() {
               minWidth: 220,
             }}
           />
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            style={{
+              padding: '8px 10px',
+              border: '2px solid var(--border-strong)',
+              background: '#ece7d9',
+              fontFamily: 'var(--font-mono)',
+              fontSize: 12,
+            }}
+          />
           <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
             <option value="all">Todos</option>
             <option value="income">Só receitas</option>
             <option value="expense">Só despesas</option>
           </select>
+          {(search || dateFilter || typeFilter !== 'all') && (
+            <button
+              className="btn btn-ghost"
+              type="button"
+              onClick={() => {
+                setSearch('')
+                setDateFilter('')
+                setTypeFilter('all')
+              }}
+            >
+              Limpar filtros
+            </button>
+          )}
         </div>
 
         {searchFiltered.length === 0 ? (

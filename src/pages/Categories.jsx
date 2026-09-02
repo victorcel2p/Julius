@@ -83,7 +83,7 @@ export default function Categories() {
   const expense = categories.filter((c) => c.type === 'expense')
 
   const renderRow = (c) => (
-    <div className="ledger-row" key={c.id} style={{ gridTemplateColumns: '1fr auto auto auto' }}>
+    <div className="ledger-row category-row" key={c.id}>
       <CategoryTag name={c.name} color={c.color} />
       <span className="mono" style={{ fontSize: 12, color: 'var(--muted)' }}>
         {c.monthly_budget ? `Orçamento: ${formatCurrency(c.monthly_budget)}` : 'Sem orçamento'}
